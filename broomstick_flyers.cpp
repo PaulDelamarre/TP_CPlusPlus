@@ -173,6 +173,7 @@ private:
      * Entities arrays
      */
     // TODO #1 : create a dynamic array to store all entities
+    vector<Entity> _entities;
 
     /**
      * My team id : if 0 you need to score on the right of the map, if 1 you need to score on the left
@@ -216,8 +217,9 @@ public:
      */
     void add(Entity &an_entity) {        
         // TODO #2 : add entity to the dynamic array of entities
-
-        // TODO #3 : sort entities using id as key     
+        _entities.push_back(an_entity);
+        // TODO #3 : sort entities using id as key  
+           
     }
 
     /**
@@ -230,7 +232,10 @@ public:
         cerr << "  op_score=" << _opponent_score << ", op_magic=" << _opponent_score<< endl;
         
         cerr << "=== entities ===" << endl;
-        // TODO #4 : print all entities from the dynamic array      
+        // TODO #4 : print all entities from the dynamic array   
+        for(Entity item : _entities) {
+            item.print();
+        }   
     }
 
     /**
@@ -258,10 +263,19 @@ public:
      */
     void choose_best_actions_for_wizards() {
         // Play action for my first wizard
-        play_action("MOVE", 8000, 3750, 100);
-
+        if (_entities[0].get_state()==true)
+        {
+            play_action("THROWS", 16000, 3700, 500);
+        }else{
+            play_action("MOVE", _entities[5].get_x(),_entities[5].get_y(),150);
+        }
         // Play action for my second wizard   
-        play_action("MOVE", 8000, 3750, 100);   
+        if (_entities[1].get_state()==true)
+        {
+            play_action("THROWS", 16000, 3700, 500);
+        }else{
+            play_action("MOVE", _entities[5].get_x(),_entities[5].get_y(),150);
+        } 
     }
 };
 
