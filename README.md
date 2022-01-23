@@ -15,7 +15,7 @@ proposer une réponse.
 
 <a src="https://www.codingame.com/start">Lien vers le site</a>
 
-## BroomStick
+# BroomStick
 
 ### Objectif monter dans le classement !
 
@@ -46,11 +46,36 @@ photo du plateau
 
 # Etape 2 Définir les actions basiques
 
-### bouger
+### Mouvement de base
 
-### tirer
+les mouvements de base doivent être écrit dans le terminal du jeu.
+pour donner une action on utilise la methode **play_action**
 
-### se diriger vers
+### Action de mouvement
+
+#### bouger
+
+```c++
+// Se déplace vers la position x : 2000 et la position y:1000 sur le terrain à la vitesse 150
+play_action("MOVE", 2000,1000,150);
+
+void play_action(string verb, int x, int y, int parameter) {
+        cout << verb << " " << x << " " << y << " " << parameter << endl;
+    }
+```
+
+Les déplacements sont limités par la taille du terrain et la vitesse est limité à 150.
+
+#### tirer
+```c++
+// Si on  possede une balle la tire dans la direction 
+play_action("THROW", 16000, 3700, 500);
+void play_action(string verb, int x, int y, int parameter) {
+        cout << verb << " " << x << " " << y << " " << parameter << endl;
+    }
+```
+
+#### lancer un sort
 
 ---
 

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 // Espace de nom utilisé
 using namespace std;
@@ -199,6 +200,13 @@ private:
      * Opponent magic
      */
     int _opponent_magic;
+    /**
+    *
+    */
+    int _cote;
+
+    int _wizard1;
+    int _wizard2;
 
 public:
     /**
@@ -210,8 +218,67 @@ public:
         _my_magic = my_magic;
         _opponent_score = opponent_score;
         _opponent_magic = opponent_magic;
+        cote_init(_my_team_id);
+        wizard_init(_my_team_id);
+    }
+    void cote_init(int cote){
+        if(cote == 0)
+            {
+                _cote=16000;
+            }
+        else {
+                _cote=0;
+            }
+    }
+    void wizard_init(int cote){
+        if(cote == 0)
+            {
+                _wizard1 = 0;
+                _wizard2 = 1;
+            }
+        else {
+                _wizard1 = 0;
+                _wizard2 = 1;
+            }
     }
 
+    Entity get_plus_proche_snaffle(Entity wizard , double back){
+        int numero_proche =0;
+        double distance = 100000;
+        for (int i =4;i<_entities.size()-2;i++){
+            double distanceTemp = sqrt((pow(_entities[i].get_x() - wizard.get_x(),2))+back*pow(_entities[i].get_y() - wizard.get_y(),2));
+            if(distance > distanceTemp){
+                numero_proche = i;
+                distance = distanceTemp;
+            }
+        }
+        return _entities[numero_proche];
+    }
+    Entity get_plus_proche_snaffle(){
+        int numero_proche =0;
+        double distance = 100000;
+        for (int i =4;i<_entities.size()-2;i++){
+            double distanceTemp = sqrt(pow(_entities[i].get_x() - _cote,2)+pow(_entities[i].get_y() - 3750,2));
+            if(distance > distanceTemp){
+                numero_proche = i;
+                distance = distanceTemp;
+            }
+        }
+        return _entities[numero_proche];
+    }
+    int tire(Entity e){
+        int pos = 0;
+        if(e.get_y() < 3750 - 1950){
+            pos = 3750 + 1050;
+        }
+        else if (e.get_y() > 3750 + 1950){
+            pos = 3750 - 1050;
+        }
+        else{
+            pos = e.get_y()  ;
+        }
+        return pos;
+    }
     /**
      * Add a new entity to the bot
      */
@@ -221,7 +288,7 @@ public:
         // TODO #3 : sort entities using id as key  
            
     }
-
+    
     /**
      * Print bot informations to the debug screen
      */
@@ -263,18 +330,20 @@ public:
      */
     void choose_best_actions_for_wizards() {
         // Play action for my first wizard
+        
         if (_entities[0].get_state()==true)
         {
-            play_action("THROWS", 16000, 3700, 500);
+            play_action("THROW", _cote, tire(_entities[_wizard1]), 500);
         }else{
-            play_action("MOVE", _entities[5].get_x(),_entities[5].get_y(),150);
+            play_action("MOVE", get_plus_proche_snaffle(_entities[_wizard1],1).get_x() , get_plus_proche_snaffle(_entities[_wizard1],1).get_y(),150);
         }
         // Play action for my second wizard   
         if (_entities[1].get_state()==true)
         {
-            play_action("THROWS", 16000, 3700, 500);
-        }else{
-            play_action("MOVE", _entities[5].get_x(),_entities[5].get_y(),150);
+            play_action("THROW", _cote, tire(_entities[_wizard2]), 500);
+        }
+        else{
+            play_action("MOVE", get_plus_proche_snaffle(_entities[_wizard2],1).get_x(),get_plus_proche_snaffle(_entities[_wizard2],1).get_y(),150);
         } 
     }
 };
@@ -293,6 +362,9 @@ int main()
     // Read my team id to know where I should score
     int my_team_id;
     cin >> my_team_id; cin.ignore();
+
+
+    // Variable environnement
 
     // Game loop
     while (1) {
@@ -326,11 +398,15 @@ int main()
             Entity an_entity(entity_id, entity_type, x, y, vx, vy, state);
             my_bot.add(an_entity);
         }
-
+        
+        
         // Print bot informations
+
         my_bot.print();
 
         // Choose best actions for my wizards
+        
         my_bot.choose_best_actions_for_wizards();
+
     }
 }
